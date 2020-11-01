@@ -61,6 +61,7 @@ public class RfetchSpecOperationCustomizer implements OperationCustomizer {
                     Schema<?> schema = SpringDocAnnotationsUtils.extractSchema(openApi.getComponents(), clazz, null);
                     String schemaRef = schema.get$ref();
                     String schemaName = schemaRef.substring(schemaRef.lastIndexOf('/') + 1);
+                    //regenerate schema to leverage JsonIgnoreProperties issue
                     openApi.getComponents().getSchemas().remove(schemaName);
                     SpringDocAnnotationsUtils.extractSchema(openApi.getComponents(), clazz, null);
                     parameterInclude.addExtension("x-filtered-object-schema", schemaRef);
