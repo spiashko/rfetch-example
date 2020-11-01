@@ -1,7 +1,8 @@
 package com.spiashko.rfetchexample.web.rest;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.spiashko.rfetchexample.crudbase.View;
 import com.spiashko.rfetchexample.person.Person;
-import com.spiashko.rfetchexample.person.PersonCreationModel;
 import com.spiashko.rfetchexample.person.PersonCreationService;
 import com.spiashko.rfetchexample.person.PersonSearchService;
 import com.spiashko.rfetchexample.rfetch.RfetchSpec;
@@ -20,12 +21,14 @@ public class PersonRestController {
     private final PersonCreationService creationService;
     private final PersonSearchService searchService;
 
+    @JsonView(View.Retrieve.class)
     @PostMapping
-    public Person create(@RequestBody PersonCreationModel createRequest) {
-        Person result = creationService.create(createRequest);
+    public Person create(@JsonView(View.Create.class) @RequestBody Person entityToCreate) {
+        Person result = creationService.create(entityToCreate);
         return result;
     }
 
+    @JsonView(View.Retrieve.class)
     @GetMapping
     public List<Person> findAll(
             @Parameter(hidden = true)
