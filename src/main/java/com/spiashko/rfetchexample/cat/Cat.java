@@ -59,4 +59,16 @@ public class Cat extends BaseJournalEntity {
     @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY)
     private Set<Cat> kids;
 
+    @JsonView({View.Retrieve.class})
+    public UUID getOwnerId() {
+        return owner.getId();
+    }
+
+    @JsonView({View.Retrieve.class})
+    public UUID getParentId() {
+        if (parent == null) {
+            return null;
+        }
+        return parent.getId();
+    }
 }
