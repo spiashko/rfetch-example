@@ -24,8 +24,8 @@ public class CatRestController {
 
     @JsonView(View.Retrieve.class)
     @PostMapping("/cats")
-    public Cat create(@JsonView(View.Create.class) @RequestBody Cat createRequest) {
-        Cat result = creationService.create(createRequest);
+    public Cat create(@JsonView(View.Create.class) @RequestBody Cat entityToCreate) {
+        Cat result = creationService.create(entityToCreate);
         return result;
     }
 

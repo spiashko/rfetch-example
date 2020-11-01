@@ -34,6 +34,8 @@ logging:
     net.ttddyy.dsproxy.listener.logging.SLF4JQueryLoggingListener: DEBUG
 
 springdoc:
+  cache:
+    disabled: true
   swagger-ui:
     showCommonExtensions: true
     showExtensions: true
