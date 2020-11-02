@@ -3,18 +3,16 @@ package com.spiashko.rfetchexample.cat;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.spiashko.rfetchexample.crudbase.View;
 import com.spiashko.rfetchexample.crudbase.entity.BaseJournalEntity;
+import com.spiashko.rfetchexample.jacksonjpa.EntityByIdDeserialize;
 import com.spiashko.rfetchexample.person.Person;
 import com.spiashko.rfetchexample.person.Person_;
-import com.spiashko.rfetchexample.utils.EntityManagerHolder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Configurable;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
@@ -31,6 +29,9 @@ import java.util.UUID;
 @Table(name = "cat")
 public class Cat extends BaseJournalEntity {
 
+    public static final String OWNER_ID = Cat_.OWNER + "Id";
+    public static final String PARENT_ID = Cat_.PARENT + "Id";
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
@@ -46,6 +47,7 @@ public class Cat extends BaseJournalEntity {
     @Column(name = "dob")
     private LocalDate dob;
 
+    @EntityByIdDeserialize(OWNER_ID)
     @JsonView({View.Retrieve.class})
     @NotNull
     @JsonIgnoreProperties(Person_.KITTENS)
@@ -53,6 +55,7 @@ public class Cat extends BaseJournalEntity {
     @JoinColumn(name = "fk_owner")
     private Person owner;
 
+    @EntityByIdDeserialize(PARENT_ID)
     @JsonView({View.Retrieve.class})
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_parent", updatable = false)
@@ -64,36 +67,18 @@ public class Cat extends BaseJournalEntity {
     private Set<Cat> kids;
 
 
-    @JsonGetter(Cat_.OWNER + "Id")
+    @JsonGetter(OWNER_ID)
     @JsonView({View.Retrieve.class, View.Create.class})
     public UUID getOwnerId() {
         return owner.getId();
     }
 
-    @JsonSetter(Cat_.OWNER + "Id")
-    public Cat setOwnerId(UUID uuid) {
-        Person owner = EntityManagerHolder.getInstance()
-                .getEntityManager().getReference(Person.class, uuid);
-        this.setOwner(owner);
-        return this;
-    }
-
-    @JsonGetter(Cat_.PARENT + "Id")
+    @JsonGetter(PARENT_ID)
     @JsonView({View.Retrieve.class, View.Create.class})
     public UUID getParentId() {
         if (parent == null) {
             return null;
         }
         return parent.getId();
-    }
-
-    @JsonSetter(Cat_.PARENT + "Id")
-    public Cat setParentId(UUID uuid) {
-        if (uuid != null) {
-            Cat parent = EntityManagerHolder.getInstance()
-                    .getEntityManager().getReference(Cat.class, uuid);
-            this.setParent(parent);
-        }
-        return this;
     }
 }
