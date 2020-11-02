@@ -1,6 +1,8 @@
 package com.spiashko.rfetchexample.crudbase.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.spiashko.rfetchexample.crudbase.View;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.domain.Persistable;
@@ -37,6 +39,7 @@ public abstract class BaseEntity implements Persistable<UUID> {
         return String.format("Entity of type %s with id: %s", this.getClass().getName(), getId());
     }
 
+    @JsonView({View.Retrieve.class, View.Update.class})
     @Override
     public abstract UUID getId();
 

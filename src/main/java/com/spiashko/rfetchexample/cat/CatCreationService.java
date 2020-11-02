@@ -2,6 +2,6 @@ package com.spiashko.rfetchexample.cat;
 
 public interface CatCreationService {
 
-    Cat create(CatCreationModel createModel);
+    Cat create(Cat entityToCreate);
 
 }

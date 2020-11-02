@@ -1,8 +1,12 @@
 package com.spiashko.rfetchexample.cat;
 
 
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.spiashko.rfetchexample.crudbase.View;
 import com.spiashko.rfetchexample.crudbase.entity.BaseJournalEntity;
+import com.spiashko.rfetchexample.jacksonjpa.EntityByIdDeserialize;
 import com.spiashko.rfetchexample.person.Person;
 import com.spiashko.rfetchexample.person.Person_;
 import lombok.AllArgsConstructor;
@@ -25,30 +29,56 @@ import java.util.UUID;
 @Table(name = "cat")
 public class Cat extends BaseJournalEntity {
 
+    public static final String OWNER_ID = Cat_.OWNER + "Id";
+    public static final String PARENT_ID = Cat_.PARENT + "Id";
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
     private UUID id;
 
+    @JsonView({View.Retrieve.class, View.Update.class, View.Create.class})
     @NotEmpty
     @Column(name = "name")
     private String name;
 
+    @JsonView({View.Retrieve.class, View.Update.class, View.Create.class})
     @NotNull
     @Column(name = "dob")
     private LocalDate dob;
 
+    @EntityByIdDeserialize(OWNER_ID)
+    @JsonView({View.Retrieve.class})
+    @NotNull
     @JsonIgnoreProperties(Person_.KITTENS)
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "fk_owner")
     private Person owner;
 
+    @EntityByIdDeserialize(PARENT_ID)
+    @JsonView({View.Retrieve.class})
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_parent")
+    @JoinColumn(name = "fk_parent", updatable = false)
     private Cat parent;
 
-    @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY)
+    @JsonView({View.Retrieve.class})
     @JsonIgnoreProperties(Cat_.PARENT)
+    @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY)
     private Set<Cat> kids;
 
+
+    @JsonGetter(OWNER_ID)
+    @JsonView({View.Retrieve.class, View.Create.class})
+    public UUID getOwnerId() {
+        return owner.getId();
+    }
+
+    @JsonGetter(PARENT_ID)
+    @JsonView({View.Retrieve.class, View.Create.class})
+    public UUID getParentId() {
+        if (parent == null) {
+            return null;
+        }
+        return parent.getId();
+    }
 }

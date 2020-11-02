@@ -1,5 +1,7 @@
 package com.spiashko.rfetchexample.crudbase.entity;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.spiashko.rfetchexample.crudbase.View;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
@@ -18,11 +20,13 @@ import java.time.LocalDateTime;
 @MappedSuperclass
 public abstract class BaseJournalEntity extends BaseEntity {
 
+    @JsonView({View.Retrieve.class})
     @NotNull
     @CreatedDate
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    @JsonView({View.Retrieve.class})
     @NotNull
     @LastModifiedDate
     @Column(name = "updated_at")
