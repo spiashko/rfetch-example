@@ -8,7 +8,6 @@ import com.spiashko.rfetchexample.crudbase.View;
 import com.spiashko.rfetchexample.crudbase.entity.BaseJournalEntity;
 import com.spiashko.rfetchexample.jacksonjpa.EntityByIdDeserialize;
 import com.spiashko.rfetchexample.person.Person;
-import com.spiashko.rfetchexample.person.Person_;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,8 +28,10 @@ import java.util.UUID;
 @Table(name = "cat")
 public class Cat extends BaseJournalEntity {
 
-    public static final String OWNER_ID = Cat_.OWNER + "Id";
-    public static final String PARENT_ID = Cat_.PARENT + "Id";
+    public static final String OWNER = "owner";
+    public static final String PARENT = "parent";
+    public static final String OWNER_ID = OWNER + "Id";
+    public static final String PARENT_ID = PARENT + "Id";
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -50,7 +51,7 @@ public class Cat extends BaseJournalEntity {
     @EntityByIdDeserialize(OWNER_ID)
     @JsonView({View.Retrieve.class})
     @NotNull
-    @JsonIgnoreProperties(Person_.KITTENS)
+    @JsonIgnoreProperties(Person.KITTENS)
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "fk_owner")
     private Person owner;
@@ -62,10 +63,9 @@ public class Cat extends BaseJournalEntity {
     private Cat parent;
 
     @JsonView({View.Retrieve.class})
-    @JsonIgnoreProperties(Cat_.PARENT)
-    @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY)
+    @JsonIgnoreProperties(PARENT)
+    @OneToMany(mappedBy = Cat.PARENT, fetch = FetchType.LAZY)
     private Set<Cat> kids;
-
 
     @JsonGetter(OWNER_ID)
     @JsonView({View.Retrieve.class, View.Create.class})

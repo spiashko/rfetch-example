@@ -4,7 +4,6 @@ package com.spiashko.rfetchexample.person;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.spiashko.rfetchexample.cat.Cat;
-import com.spiashko.rfetchexample.cat.Cat_;
 import com.spiashko.rfetchexample.crudbase.View;
 import com.spiashko.rfetchexample.crudbase.entity.BaseJournalEntity;
 import lombok.AllArgsConstructor;
@@ -25,6 +24,8 @@ import java.util.UUID;
 @Table(name = "person")
 public class Person extends BaseJournalEntity {
 
+    public static final String KITTENS = "kittens";
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
@@ -36,8 +37,8 @@ public class Person extends BaseJournalEntity {
     private String name;
 
     @JsonView({View.Retrieve.class})
-    @JsonIgnoreProperties(Cat_.OWNER)
-    @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY)
+    @JsonIgnoreProperties(Cat.OWNER)
+    @OneToMany(mappedBy = Cat.OWNER, fetch = FetchType.LAZY)
     private Set<Cat> kittens;
 
 }
